@@ -393,7 +393,7 @@ class GridView extends Component {
             )}
           </tfoot>
         </table>
-        {showTotalRows && <span>Total Records: {totalRows}</span>}
+        {showTotalRows && dataSource && <span>Total Records: {totalRows}</span>}
       </div>
     );
   }

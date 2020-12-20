@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-
 export default function BoundField({ ...props }) {
   return <React.Fragment></React.Fragment>;
 }
