@@ -12,7 +12,7 @@ export default class Pagination extends Component {
   constructor(props) {
     super(props);
     const { totalRows, pageSize } = this.props;
-    const _maxPaging = 9;
+    const _maxPaging = 6;
     const _totalPages =
       totalRows > pageSize && pageSize > 0
         ? Math.floor(totalRows / pageSize) + (totalRows % pageSize > 0 ? 1 : 0)
@@ -69,6 +69,21 @@ export default class Pagination extends Component {
       }
     }
   };
+  setLastPageClick = () => {
+    const { totalPages, maxPaging } = this.state;
+    const lastPage = totalPages - maxPaging;
+    this.setState(
+      {
+        currentPageNumber: lastPage,
+        showNextButton: false,
+        showPreviousButton: true,
+        selectedPageIndex: totalPages - 1,
+      },
+      () => {
+        this.renderPagingData();
+      }
+    );
+  };
   setPreviousPageClick = () => {
     const { currentPageNumber } = this.state;
     const previousPage = this.getPreviousPageNumber();
@@ -89,6 +104,19 @@ export default class Pagination extends Component {
       }
     }
   };
+  setFirstPageClick = () => {
+    this.setState(
+      {
+        currentPageNumber: 1,
+        selectedPageIndex: 0,
+        showPreviousButton: false,
+        showNextButton: true,
+      },
+      () => {
+        this.renderPagingData();
+      }
+    );
+  };
   setCurrentPageClick = (event) => {
     if (event) {
       const pageButton = event.target;
@@ -101,7 +129,7 @@ export default class Pagination extends Component {
 
   getNextPageNumber = () => {
     const { currentPageNumber, maxPaging, totalPages } = this.state;
-    if (maxPaging > totalPages) {
+    if (maxPaging >= totalPages) {
       return currentPageNumber + totalPages - 1;
     }
     return currentPageNumber + maxPaging;
@@ -140,12 +168,19 @@ export default class Pagination extends Component {
     } = this.state;
     let pageCols = [];
 
-    showPreviousButton &&
+    if (showPreviousButton) {
+      pageCols.push(
+        <GridCell key={-1}>
+          <button onClick={this.setFirstPageClick}>{"First"}</button>
+        </GridCell>
+      );
       pageCols.push(
         <GridCell key={0}>
           <button onClick={this.setPreviousPageClick}>{"<"}</button>
         </GridCell>
       );
+    }
+
     const nextRenderPage = this.getNextPageNumber();
     for (
       let pageIndex = currentPageNumber;
@@ -167,13 +202,18 @@ export default class Pagination extends Component {
         </GridCell>
       );
     }
-    showNextButton &&
-      this.getNextPageButtonVisiblilty() &&
+    if (showNextButton && this.getNextPageButtonVisiblilty()) {
       pageCols.push(
-        <GridCell key={totalPages + 1}>
+        <GridCell key={totalPages}>
           <button onClick={this.setNextPageClick}>{">"}</button>
         </GridCell>
       );
+      pageCols.push(
+        <GridCell key={totalPages + 1}>
+          <button onClick={this.setLastPageClick}>{"Last"}</button>
+        </GridCell>
+      );
+    }
 
     let tblClassName = pagerSettings.className;
     if (pagerSettings && pagerSettings.outerBorder === false)

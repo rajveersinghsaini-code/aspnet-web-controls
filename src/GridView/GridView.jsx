@@ -1,12 +1,17 @@
 import classnames from "classnames";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { TABLE_CLASS } from "../private/Constants";
+import {
+  TABLE_CLASS,
+  TABLE_SORT_ASCENDING,
+  TABLE_SORT_DESCENDING,
+} from "../private/Constants";
 import GridCell from "./GridCell";
 import GridRow from "./GridRow";
 import GridHeaderCell from "./GridHeaderCell";
 import Pagination from "./Pagination";
 import "./WebControls.css";
+import { resultOf } from "../private/AppUtility";
 
 class GridView extends Component {
   constructor(props) {
@@ -15,7 +20,7 @@ class GridView extends Component {
       selectedPageIndex: 0,
       sortExpression: "",
       internalDataSource: this.gridViewInitialLoad(0),
-      sortDirection: "ASC",
+      sortDirection: TABLE_SORT_ASCENDING,
     };
   }
   static propTypes = {
@@ -52,6 +57,8 @@ class GridView extends Component {
       outerBorder: PropTypes.bool,
       align: PropTypes.oneOf(["left", "center", "right"]),
     }),
+    showRowNumbers: PropTypes.bool,
+    showTotalRows: PropTypes.bool,
   };
   static defaultProps = {
     allowPaging: false,
@@ -75,6 +82,8 @@ class GridView extends Component {
       outerBorder: true,
       align: "left",
     },
+    showRowNumbers: true,
+    showTotalRows: true,
   };
 
   setRootRef = (ref) => {
@@ -112,13 +121,13 @@ class GridView extends Component {
   };
   getSortOrder = (sortExp, sortDir) => {
     return (a, b) => {
-      if (sortDir === "ASC") {
+      if (sortDir === TABLE_SORT_ASCENDING) {
         if (a[sortExp] > b[sortExp]) {
           return 1;
         } else if (a[sortExp] < b[sortExp]) {
           return -1;
         }
-      } else if (sortDir === "DESC") {
+      } else if (sortDir === TABLE_SORT_DESCENDING) {
         if (a[sortExp] < b[sortExp]) {
           return 1;
         } else if (a[sortExp] > b[sortExp]) {
@@ -186,66 +195,105 @@ class GridView extends Component {
       (_showHeader || showHeaderWhenEmpty) &&
       dataFieldNames.map((child, index) => {
         return (
-          <GridHeaderCell
-            key={index}
-            visible={child.visible}
-            scope="col"
-            title={child.headerText}
-          >
-            {child.headerText}
-            {allowSorting && child.sortExpression && (
-              <React.Fragment>
-                <a
-                  href="javascript:void(0)"
-                  onClick={() =>
-                    this.setSortExpression(child.sortExpression, "ASC")
-                  }
-                >
-                  {"<"}
-                </a>
-                <a
-                  href="javascript:void(0)"
-                  onClick={() =>
-                    this.setSortExpression(child.sortExpression, "DESC")
-                  }
-                >
-                  {">"}
-                </a>
-              </React.Fragment>
-            )}
-          </GridHeaderCell>
+          child.visible && (
+            <GridHeaderCell
+              key={index}
+              visible={child.visible}
+              scope="col"
+              title={child.headerText}
+              style={child.headerStyle}
+              className={child.headerCssClass}
+            >
+              {child.headerText}
+              {allowSorting && child.sortExpression && (
+                <span style={{ float: "right" }}>
+                  <a
+                    href="/#"
+                    style={{ textDecoration: "none" }}
+                    title="Sort ascending order"
+                    onClick={() =>
+                      this.setSortExpression(
+                        child.sortExpression,
+                        TABLE_SORT_ASCENDING
+                      )
+                    }
+                  >
+                    {"<"}
+                  </a>
+                  <a
+                    href="/#"
+                    style={{ textDecoration: "none" }}
+                    title="Sort descending order"
+                    onClick={() =>
+                      this.setSortExpression(
+                        child.sortExpression,
+                        TABLE_SORT_DESCENDING
+                      )
+                    }
+                  >
+                    {">"}
+                  </a>
+                </span>
+              )}
+            </GridHeaderCell>
+          )
         );
       })
     );
   };
   setSortExpression = (sortExp, sortDir) => {
-    this.setState({ sortExpression: sortExp, sortDirection: sortDir }, () => {
-      this.getPaginationData();
-    });
+    const { sortExpression, sortDirection } = this.state;
+    if (sortExpression !== sortExp || sortDirection !== sortDir) {
+      this.setState({ sortExpression: sortExp, sortDirection: sortDir }, () => {
+        this.getPaginationData();
+      });
+    }
+  };
+  getRowNumberStartIndex = () => {
+    const { pageSize } = this.props;
+    const { selectedPageIndex } = this.state;
+    let startRec = Math.max(selectedPageIndex, 0) * pageSize;
+    return startRec;
   };
   getTableBodyContent = (dataFieldNames, internalDataSource) => {
-    const { emptyDataText } = this.props;
+    const { emptyDataText, showRowNumbers } = this.props;
+    const rowNumstart = showRowNumbers && this.getRowNumberStartIndex();
     if (dataFieldNames && dataFieldNames.length > 0) {
       const numberOfColumns = dataFieldNames.length;
       if (internalDataSource && internalDataSource.length > 0) {
         return internalDataSource.map((obj, rowIndex) => {
           return (
             <GridRow key={rowIndex}>
+              {showRowNumbers && (
+                <GridCell key={rowIndex}>{rowNumstart + rowIndex + 1}</GridCell>
+              )}
               {dataFieldNames.map((field, colIndex) => {
                 let tdText = "";
-                if (obj && obj.hasOwnProperty(field.dataField)) {
+                if (
+                  field.visible &&
+                  obj &&
+                  obj.hasOwnProperty(field.dataField)
+                ) {
                   tdText = obj[field.dataField];
                 }
                 if (
+                  field.visible &&
                   field.dataExpression &&
                   typeof field.dataExpression === "function"
                 ) {
-                  tdText = field.dataExpression(obj);
+                  tdText = resultOf(field.dataExpression(obj));
                 }
                 return (
-                  <GridCell key={colIndex} visible={field.visible}>
-                    {tdText}
-                  </GridCell>
+                  field.visible && (
+                    <GridCell
+                      key={colIndex}
+                      visible={field.visible}
+                      style={field.itemStyle}
+                      className={field.itemCssClass}
+                    >
+                      {tdText}
+                    </GridCell>
+                  )
                 );
               })}
             </GridRow>
@@ -281,13 +329,19 @@ class GridView extends Component {
       dataKeyNames,
       emptyDataText,
       pagerSettings,
+      showRowNumbers,
+      showTotalRows,
       ...elementProps
     } = this.props;
 
     const { internalDataSource } = this.state;
     const totalRows = dataSource.length;
     const dataFieldNames = this.getDataColumnsDetails();
-    const numberOfColumns = dataFieldNames.length;
+    let numberOfColumns = dataFieldNames.filter((obj) => {
+      return obj.visible === true;
+    }).length;
+    numberOfColumns = showRowNumbers ? numberOfColumns + 1 : numberOfColumns;
+
     const headerRow = this.getGridviewHeaderRow(dataFieldNames);
     const bodyRows = this.getTableBodyContent(
       dataFieldNames,
@@ -314,9 +368,20 @@ class GridView extends Component {
           {caption && (
             <caption className="wc-table--caption">{caption}</caption>
           )}
-          <thead>{headerRow && <GridRow>{headerRow}</GridRow>}</thead>
-          <tbody>
-            {bodyRows}
+          <thead>
+            {headerRow && (
+              <GridRow>
+                {showRowNumbers && (
+                  <GridHeaderCell key={-1} disabled={true}>
+                    {"#"}
+                  </GridHeaderCell>
+                )}
+                {headerRow}
+              </GridRow>
+            )}
+          </thead>
+          <tbody>{bodyRows}</tbody>
+          <tfoot>
             {allowPaging && (
               <Pagination
                 numberOfColumns={numberOfColumns}
@@ -326,10 +391,9 @@ class GridView extends Component {
                 pageIndexChanging={this.onPaginationClick}
               />
             )}
-          </tbody>
-
-          <tfoot></tfoot>
+          </tfoot>
         </table>
+        {showTotalRows && <span>Total Records: {totalRows}</span>}
       </div>
     );
   }

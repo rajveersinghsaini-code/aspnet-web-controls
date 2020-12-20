@@ -13,3 +13,5 @@ export const CLEAR_ANNOUNCEMENT_TIMEOUT = 500;
 export const SELECTABLE_ROW_CLASS = "wc-table--selectable";
 export const PAGINATION_ACTIVE_PAGE_CLASS = "wc-pagination--active";
 export const PAGINATION_BORDER_NOBORDER_CLASS = "wc-pagination--border-none";
+export const TABLE_SORT_ASCENDING = "ASC";
+export const TABLE_SORT_DESCENDING = "DESC";

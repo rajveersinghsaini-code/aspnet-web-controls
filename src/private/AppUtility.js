@@ -1,5 +1,5 @@
 export const __nonMSDOMBrowser =
-  window.navigator.appName.toLowerCase().indexOf("explorer") == -1;
+  window.navigator.appName.toLowerCase().indexOf("explorer") === -1;
 
 export function resultOf(propertyOrFunction, arg = {}, context = null) {
   return typeof propertyOrFunction !== "function"

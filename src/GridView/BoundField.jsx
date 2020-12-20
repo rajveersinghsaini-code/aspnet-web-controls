@@ -12,6 +12,10 @@ BoundField.propTypes = {
   visible: PropTypes.bool,
   dataExpression: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   sortExpression: PropTypes.string,
+  headerStyle: PropTypes.object,
+  itemStyle: PropTypes.object,
+  headerCssClass: PropTypes.string,
+  itemCssClass: PropTypes.string,
 };
 BoundField.defaultProps = {
   headerText: "",
@@ -21,4 +25,8 @@ BoundField.defaultProps = {
   visible: true,
   dataExpression: null,
   sortExpression: null,
+  headerStyle: null,
+  itemStyle: null,
+  headerCssClass: null,
+  itemCssClass: null,
 };
