@@ -26,29 +26,6 @@ export default class Pagination extends Component {
       selectedPageIndex: 0,
     };
   }
-  static propTypes = {
-    totalRows: PropTypes.number.isRequired,
-    pageSize: PropTypes.number.isRequired,
-    numberOfColumns: PropTypes.number.isRequired,
-    pageIndexChanging: PropTypes.func.isRequired,
-    pagerSettings: PropTypes.shape({
-      className: PropTypes.string,
-      outerBorder: PropTypes.bool,
-      align: PropTypes.oneOf(["left", "center", "right"]),
-    }),
-  };
-
-  static defaultProps = {
-    totalRows: 0,
-    pageSize: 0,
-    numberOfColumns: 0,
-    pageIndexChanging: null,
-    pagerSettings: {
-      className: "",
-      outerBorder: true,
-      align: "left",
-    },
-  };
   setNextPageClick = () => {
     const { currentPageNumber, totalPages } = this.state;
     const nextPage = this.getNextPageNumber();
@@ -154,7 +131,6 @@ export default class Pagination extends Component {
       totalRows,
       pageSize,
       numberOfColumns,
-      showOuterBorder,
       pageIndexChanging,
       pagerSettings,
       ...props
@@ -245,3 +221,25 @@ export default class Pagination extends Component {
     );
   }
 }
+Pagination.propTypes = {
+  totalRows: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  numberOfColumns: PropTypes.number.isRequired,
+  pageIndexChanging: PropTypes.func.isRequired,
+  pagerSettings: PropTypes.shape({
+    className: PropTypes.string,
+    outerBorder: PropTypes.bool,
+    align: PropTypes.oneOf(["left", "center", "right"]),
+  }),
+};
+Pagination.defaultProps = {
+  totalRows: 0,
+  pageSize: 0,
+  numberOfColumns: 0,
+  pageIndexChanging: null,
+  pagerSettings: {
+    className: "",
+    outerBorder: true,
+    align: "left",
+  },
+};

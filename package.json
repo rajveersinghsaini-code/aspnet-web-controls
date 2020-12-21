@@ -1,14 +1,25 @@
 {
-  "name": "web-controls",
-  "description": "Pacakge to generate controls similer to asp.net web control syntax.",
-  "version": "0.0.1",
+  "name": "aspnet-web-controls",
+  "version": "1.0.0",
+  "description": "Generate grid view in react format same as asp.net form syntax.",
+  "main": "build/index.js",
   "private": false,
-  "license": "MIT",
+  "types": "./index.d.ts",
+  "typesVersions": {
+    ">=3.2": {
+      "*": [
+        "ts3.2/*"
+      ]
+    },
+    ">=3.1": {
+      "*": [
+        "ts3.1/*"
+      ]
+    }
+  },
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.2.2",
-    "@testing-library/user-event": "^12.5.0",
     "classnames": "^2.2.6",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
@@ -16,15 +27,37 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "webpack --mode production",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "keywords": [
+    "aspnet",
+    "aspnet-web-controls",
+    "asp.net web controls",
+    "aspnet-gridview",
+    "gridview",
+    "react",
+    "gridview",
+    "asp.net",
+    "gridview"
+  ],
+  "author": "Rajveer Singh",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^5.0.1",
+    "eslint": "^7.16.0",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-react": "^7.21.5",
+    "style-loader": "^2.0.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.2.0"
   },
   "browserslist": {
     "production": [

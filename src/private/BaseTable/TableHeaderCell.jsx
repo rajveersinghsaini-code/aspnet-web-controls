@@ -4,25 +4,6 @@ import React, { Component } from "react";
 import { resultOf } from "../AppUtility";
 
 export default class TableHeaderCell extends Component {
-  static propTypes = {
-    columnKey: PropTypes.string.isRequired,
-    label: PropTypes.string,
-    header: PropTypes.oneOfType([Prop.node, Prop.func]),
-    align: PropTypes.oneOf(["left", "center", "right"]),
-    className: PropTypes.string,
-    noWrap: PropTypes.bool,
-    style: PropTypes.object,
-    headerCellComponent: PropTypes.oneOfType([Prop.node, Prop.func]),
-    headerCellComponentsProps: PropTypes.object,
-  };
-  static defaultProps = {
-    label: null,
-    header: null,
-    align: null,
-    className: "",
-    headerCellComponent: "th",
-    headerCellComponentsProps: null,
-  };
   render() {
     const {
       columnKey,
@@ -73,3 +54,23 @@ export default class TableHeaderCell extends Component {
     );
   }
 }
+
+TableHeaderCell.propTypes = {
+  columnKey: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  header: PropTypes.oneOfType([Prop.node, Prop.func]),
+  align: PropTypes.oneOf(["left", "center", "right"]),
+  className: PropTypes.string,
+  noWrap: PropTypes.bool,
+  style: PropTypes.object,
+  headerCellComponent: PropTypes.oneOfType([Prop.node, Prop.func]),
+  headerCellComponentsProps: PropTypes.object,
+};
+TableHeaderCell.defaultProps = {
+  label: null,
+  header: null,
+  align: null,
+  className: "",
+  headerCellComponent: "th",
+  headerCellComponentsProps: null,
+};

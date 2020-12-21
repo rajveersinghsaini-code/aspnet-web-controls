@@ -13,7 +13,7 @@ import Pagination from "./Pagination";
 import "./WebControls.css";
 import { resultOf } from "../private/AppUtility";
 
-class GridView extends Component {
+export default class GridView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,73 +23,11 @@ class GridView extends Component {
       sortDirection: TABLE_SORT_ASCENDING,
     };
   }
-  static propTypes = {
-    id: PropTypes.string.isRequired,
-    children: PropTypes.element.isRequired,
-    dataSource: PropTypes.arrayOf(PropTypes.object),
-    cssClass: PropTypes.string,
-    allowPaging: PropTypes.bool,
-    pageSize: PropTypes.number,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    allowSorting: PropTypes.bool,
-    showFooter: PropTypes.bool,
-    showHeader: PropTypes.bool,
-    showHeaderWhenEmpty: PropTypes.bool,
-    cellSpacing: PropTypes.number,
-    cellPadding: PropTypes.number,
-    gridLines: PropTypes.oneOf([
-      "None",
-      "Horizontal",
-      "Vertical",
-      "Both",
-      "none",
-      "horizontal",
-      "vertical",
-      "both",
-    ]),
-    caption: PropTypes.string,
-    outerBorder: PropTypes.bool,
-    dataKeyNames: PropTypes.arrayOf(PropTypes.string),
-    emptyDataText: PropTypes.string,
-    pagerSettings: PropTypes.shape({
-      className: PropTypes.string,
-      outerBorder: PropTypes.bool,
-      align: PropTypes.oneOf(["left", "center", "right"]),
-    }),
-    showRowNumbers: PropTypes.bool,
-    showTotalRows: PropTypes.bool,
-  };
-  static defaultProps = {
-    allowPaging: false,
-    pageSize: 10,
-    allowSorting: false,
-    showFooter: false,
-    showHeader: true,
-    showHeaderWhenEmpty: false,
-    width: null,
-    height: null,
-    cellSpacing: 0,
-    cellPadding: 2,
-    caption: null,
-    gridLines: "Both",
-    outerBorder: true,
-    dataSource: [],
-    dataKeyNames: null,
-    emptyDataText: "No data available.",
-    pagerSettings: {
-      className: "",
-      outerBorder: true,
-      align: "left",
-    },
-    showRowNumbers: true,
-    showTotalRows: true,
-  };
 
   setRootRef = (ref) => {
     this.gridViewRef = ref;
-    const controlRef = this.props.controlRef;
-    controlRef && controlRef(ref);
+    //const controlRef = this.props.controlRef;
+    //controlRef && controlRef(ref);
   };
 
   onPaginationClick = (pagingObject) => {
@@ -167,10 +105,10 @@ class GridView extends Component {
     const { children } = this.props;
     let dataFieldNames = [];
     React.Children.forEach(children, (columns) => {
-      if (columns.type.name === "Columns") {
+      if (columns.type.displayName === "Columns") {
         const arrayOfColumns = columns.props.children
           ? columns.props.children
-          : 0;
+          : null;
         arrayOfColumns &&
           arrayOfColumns.map((child) => {
             return dataFieldNames.push(child.props);
@@ -393,9 +331,71 @@ class GridView extends Component {
             )}
           </tfoot>
         </table>
-        {showTotalRows && <span>Total Records: {totalRows}</span>}
+        {showTotalRows && dataSource && <span>Total Records: {totalRows}</span>}
       </div>
     );
   }
 }
-export default GridView;
+GridView.propTypes = {
+  id: PropTypes.string.isRequired,
+  children: PropTypes.element.isRequired,
+  dataSource: PropTypes.arrayOf(PropTypes.object),
+  cssClass: PropTypes.string,
+  allowPaging: PropTypes.bool,
+  pageSize: PropTypes.number,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  allowSorting: PropTypes.bool,
+  showFooter: PropTypes.bool,
+  showHeader: PropTypes.bool,
+  showHeaderWhenEmpty: PropTypes.bool,
+  cellSpacing: PropTypes.number,
+  cellPadding: PropTypes.number,
+  gridLines: PropTypes.oneOf([
+    "None",
+    "Horizontal",
+    "Vertical",
+    "Both",
+    "none",
+    "horizontal",
+    "vertical",
+    "both",
+  ]),
+  caption: PropTypes.string,
+  outerBorder: PropTypes.bool,
+  dataKeyNames: PropTypes.arrayOf(PropTypes.string),
+  emptyDataText: PropTypes.string,
+  pagerSettings: PropTypes.shape({
+    className: PropTypes.string,
+    outerBorder: PropTypes.bool,
+    align: PropTypes.oneOf(["left", "center", "right"]),
+  }),
+  showRowNumbers: PropTypes.bool,
+  showTotalRows: PropTypes.bool,
+};
+GridView.defaultProps = {
+  allowPaging: false,
+  pageSize: 10,
+  allowSorting: false,
+  showFooter: false,
+  showHeader: true,
+  showHeaderWhenEmpty: false,
+  width: null,
+  height: null,
+  cellSpacing: 0,
+  cellPadding: 2,
+  caption: null,
+  gridLines: "Both",
+  outerBorder: true,
+  dataSource: [],
+  dataKeyNames: null,
+  emptyDataText: "No data available.",
+  pagerSettings: {
+    className: "",
+    outerBorder: true,
+    align: "left",
+  },
+  showRowNumbers: true,
+  showTotalRows: true,
+};
+GridView.displayName = "GridView";
