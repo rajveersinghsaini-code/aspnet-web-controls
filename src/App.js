@@ -1,20 +1,14 @@
 //import logo from "./logo.svg";
 import React from "react";
 import "./App.css";
-import GridView from "./GridView/GridView";
-import BoundField from "./GridView/BoundField";
-import Columns from "./GridView/Columns";
+import { GridView, Columns, BoundField } from "./main";
 
 function App() {
   let dataSource = [
-    { Name: "Rajveer", Id: 100, Salary: 15000, Currency: "CAD" },
-    { Name: "Akshay", Id: 101, Salary: 10000, Currency: "USD" },
-    { Name: "Neetu", Id: 102, Salary: 10000, Currency: "GBP" },
-    { Name: "Yashika", Id: 103, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 104, Salary: 10000, Currency: "GBP" },
-    { Name: "Rajveer", Id: 105, Salary: 10000, Currency: "GBP" },
-    { Name: "Rajveer", Id: 106, Salary: 10000, Currency: "GBP" },
-    { Name: "Rajveer", Id: 107, Salary: 10000, Currency: "GBP" },
+    { Name: "David", Id: 105, Salary: 10000, Currency: "GBP" },
+    { Name: "Mohan", Id: 106, Salary: 10000, Currency: "GBP" },
+    { Name: "Rajiv", Id: 107, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 108, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 109, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 110, Salary: 10000, Currency: "GBP" },

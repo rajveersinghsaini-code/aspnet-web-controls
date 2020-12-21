@@ -1,0 +1,16 @@
+# npmignore
+node_modules/
+public/
+
+# ignore src
+src/**/*
+
+webpack.config.js
+.eslintcache
+.gitignore
+.eslintrc
+.babelrc
+
+# override above and include ts files
+
+!src/**/*.ts

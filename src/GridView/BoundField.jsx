@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-export default function BoundField({ ...props }) {
+export default function BoundField() {
   return <React.Fragment></React.Fragment>;
 }
 BoundField.propTypes = {
@@ -29,3 +29,4 @@ BoundField.defaultProps = {
   headerCssClass: null,
   itemCssClass: null,
 };
+BoundField.displayName = "BoundField";

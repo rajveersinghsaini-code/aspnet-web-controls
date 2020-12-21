@@ -1,0 +1,33 @@
+{
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true
+        }
+    },
+    "env": {
+        "amd": true,
+        "browser": true
+    },
+    "extends": [
+        //"eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    
+    "settings": {
+        "react": {
+            "pragma": "React",
+            "version": "17.0.1"
+        },
+        "propWrapperFunctions": [ "forbidExtraProps" ]
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "semi": 2,
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error"
+    }
+}
