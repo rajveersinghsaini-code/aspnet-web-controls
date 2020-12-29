@@ -1,0 +1,39 @@
+.wc-list-pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 0.25rem;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-left: -1px;
+}
+.wc-page-item {
+  margin-right: 3px;
+}
+.wc-page-item.active .wc-page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.wc-page-item:hover:not(.active) {
+  background-color: #eee;
+}
+
+.wc-page-link:not(:disabled):not(.disabled) {
+  cursor: pointer;
+}
+
+.wc-page-link {
+  position: relative;
+  display: block;
+  padding: 0.28rem;
+  line-height: 1.25;
+  border: 1px solid #808080;
+  text-decoration: none;
+}
+
+.wc-pagination-border-none {
+  border: transparent 1px solid;
+  padding-left: 0px;
+}

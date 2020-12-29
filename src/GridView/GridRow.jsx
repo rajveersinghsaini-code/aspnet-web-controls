@@ -4,7 +4,9 @@ import React from "react";
 import { TABLE_BODY_ROW_CLASS } from "../private/Constants";
 
 function GridRow({ className, ...props }) {
-  const trClassName = classnames(TABLE_BODY_ROW_CLASS, className);
+  let trClassName = null;
+  if (TABLE_BODY_ROW_CLASS) trClassName = TABLE_BODY_ROW_CLASS;
+  if (className) classnames(trClassName, className);
   return <tr className={trClassName} {...props} />;
 }
 
@@ -16,4 +18,5 @@ GridRow.defaultProps = {
   className: null,
   children: null,
 };
-export default React.memo(GridRow);
+GridRow.displayName = "GridRow";
+export default GridRow;

@@ -1,6 +1,6 @@
 {
   "name": "aspnet-web-controls",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Generate grid view in react format same as asp.net form syntax.",
   "main": "build/index.js",
   "private": false,
