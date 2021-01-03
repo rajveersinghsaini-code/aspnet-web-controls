@@ -12,7 +12,7 @@ import GridHeaderCell from "./GridHeaderCell";
 import Pagination from "./Pagination";
 import "./WebControls.css";
 import { resultOf } from "../private/AppUtility";
-import { pagerSetting, defaultPagerSetting } from "../private/CustomPropTypes";
+import { defaultPagerSetting } from "../private/CustomPropTypes";
 
 export default class GridView extends Component {
   constructor(props) {
@@ -157,6 +157,7 @@ export default class GridView extends Component {
       dataSource,
     } = this.props;
     const _showHeader = showHeader && dataSource.length > 0 ? true : false;
+    const sortStyle = { textDecoration: "none", cursor: "pointer" };
     return (
       (_showHeader || showHeaderWhenEmpty) &&
       dataFieldNames.map((child, index) => {
@@ -176,8 +177,7 @@ export default class GridView extends Component {
               {allowSorting && child.sortExpression && (
                 <span style={{ float: "right" }}>
                   <a
-                    href="#"
-                    style={{ textDecoration: "none" }}
+                    style={sortStyle}
                     title="Sort ascending order"
                     onClick={() =>
                       this.setSortExpression(
@@ -189,8 +189,7 @@ export default class GridView extends Component {
                     {"<"}
                   </a>
                   <a
-                    href="#"
-                    style={{ textDecoration: "none" }}
+                    style={sortStyle}
                     title="Sort descending order"
                     onClick={() =>
                       this.setSortExpression(
@@ -227,7 +226,11 @@ export default class GridView extends Component {
           const bodyRow = (
             <GridRow key={rowIndex} style={altRowStyle}>
               {showRowNumbers && (
-                <GridCell key="-1" scope="row">
+                <GridCell
+                  key="-1"
+                  scope="row"
+                  className="wc-table--serial-number"
+                >
                   {rowNumstart + rowIndex + 1}
                 </GridCell>
               )}
@@ -384,7 +387,11 @@ export default class GridView extends Component {
             {headerRow && (
               <GridRow key="-1">
                 {showRowNumbers && (
-                  <GridHeaderCell key={-1} disabled={true}>
+                  <GridHeaderCell
+                    key={-1}
+                    disabled={true}
+                    className="wc-table--serial-number"
+                  >
                     {"#"}
                   </GridHeaderCell>
                 )}
@@ -413,7 +420,10 @@ export default class GridView extends Component {
 }
 GridView.propTypes = {
   id: PropTypes.string.isRequired,
-  children: PropTypes.arrayOf(PropTypes.element),
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]),
   dataSource: PropTypes.arrayOf(PropTypes.object),
   onRowDataBound: PropTypes.func,
   cssClass: PropTypes.string,

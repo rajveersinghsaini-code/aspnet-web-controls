@@ -38,6 +38,7 @@
   text-align: left;
 }
 
-.wc-pagination--active {
-  /*background-color: aquamarine;*/
+.wc-table--serial-number {
+  text-align: center;
+  vertical-align: middle;
 }
