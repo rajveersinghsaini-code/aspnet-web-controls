@@ -1,33 +1,8 @@
-.wc-table {
-  border-collapse: collapse;
-}
-.wc-table thead {
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-.wc-table thead th {
-  cursor: auto;
-  background: #f9fafb;
-  text-align: inherit;
-  color: rgba(0, 0, 0, 0.87);
-  padding: 0.35em 0.225em;
-  vertical-align: inherit;
-  font-weight: 700;
-  border-bottom: 3px solid rgba(34, 36, 38, 0.1);
-}
-.wc-table.bordered {
-  border: solid 1px;
-}
-
-.wc-table.bordered tr td {
-  border: solid 1px;
-}
-
-.wc-table.cell-hide {
+.wc-table--cell-hide {
   display: none !important;
   visibility: hidden !important;
 }
-.wc-table.cell-show {
+.wc-table--cell-show {
   display: table-cell !important;
   visibility: visible !important;
 }
@@ -41,4 +16,34 @@
 .wc-table--serial-number {
   text-align: center;
   vertical-align: middle;
+}
+
+.wc-table--sorting-container {
+  float: right;
+  padding: 6px 3px 0px 3px;
+}
+.wc-table--sorting-container > ul {
+  list-style: none;
+  margin: auto;
+  padding: 0;
+}
+.wc-table--sorting-container > ul > li {
+  cursor: pointer;
+}
+.wc-table--sorting-container > ul > li:last-child {
+  margin-top: 3px;
+}
+.wc-icons--arrow-up::after {
+  content: " ";
+  display: block;
+  border-style: solid;
+  border-width: 0 5px 5px 5px;
+  border-color: transparent transparent #333 transparent;
+}
+.wc-icons--arrow-down::after {
+  content: " ";
+  display: block;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: #333 transparent transparent transparent;
 }

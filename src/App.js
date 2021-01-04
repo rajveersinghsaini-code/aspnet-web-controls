@@ -89,15 +89,13 @@ function App() {
         id="grdHelloWorld"
         dataSource={sampleDataSource}
         emptyDataText="no data"
-        width={500}
         allowPaging={true}
         allowSorting={true}
         showFooter={true}
         onRowDataBound={onRowDataBound}
-        initialValuesOnEvents={() => {
+        initializeValuesOnEvents={() => {
           _totalSalary = 0;
         }}
-        className="table table-sm "
       >
         <Columns>
           <BoundField
@@ -105,14 +103,12 @@ function App() {
             dataField="Id"
             sortExpression="Id"
             visible={false}
-            headerCssClass="thead-dark"
           />
           <BoundField
             headerText="Name"
             dataField="Name"
             sortExpression="Name"
             accessibleHeaderText="hello world"
-            headerCssClass="thead-dark"
           />
           <BoundField
             headerText="Salary (INR)"
@@ -121,7 +117,6 @@ function App() {
             itemStyle={{ textAlign: "right" }}
             footerExpression={() => <b>Total :</b>}
             footerStyle={{ textAlign: "right" }}
-            headerCssClass="thead-dark"
           />
           <BoundField
             headerText="Calculated Field"
@@ -129,11 +124,9 @@ function App() {
             itemStyle={{ textAlign: "right" }}
             footerExpression={() => `$${_totalSalary.toFixed(2)}`}
             footerStyle={{ textAlign: "right" }}
-            headerCssClass="thead-dark"
           />
           <BoundField
             headerText="Action"
-            headerCssClass="thead-dark"
             dataExpression={(objRow) => (
               <button
                 className="btn btn-sm  btn-primary"

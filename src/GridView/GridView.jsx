@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import {
   TABLE_CLASS,
   TABLE_SORT_ASCENDING,
@@ -157,7 +157,11 @@ export default class GridView extends Component {
       dataSource,
     } = this.props;
     const _showHeader = showHeader && dataSource.length > 0 ? true : false;
-    const sortStyle = { textDecoration: "none", cursor: "pointer" };
+    const sortStyle = {
+      textDecoration: "none",
+      cursor: "pointer",
+      display: "table-cell",
+    };
     return (
       (_showHeader || showHeaderWhenEmpty) &&
       dataFieldNames.map((child, index) => {
@@ -175,31 +179,31 @@ export default class GridView extends Component {
             >
               {child.headerText}
               {allowSorting && child.sortExpression && (
-                <span style={{ float: "right" }}>
-                  <a
-                    style={sortStyle}
-                    title="Sort ascending order"
-                    onClick={() =>
-                      this.setSortExpression(
-                        child.sortExpression,
-                        TABLE_SORT_ASCENDING
-                      )
-                    }
-                  >
-                    {"<"}
-                  </a>
-                  <a
-                    style={sortStyle}
-                    title="Sort descending order"
-                    onClick={() =>
-                      this.setSortExpression(
-                        child.sortExpression,
-                        TABLE_SORT_DESCENDING
-                      )
-                    }
-                  >
-                    {">"}
-                  </a>
+                <span className="wc-table--sorting-container">
+                  <ul>
+                    <li
+                      title="Sort ascending"
+                      onClick={() =>
+                        this.setSortExpression(
+                          child.sortExpression,
+                          TABLE_SORT_ASCENDING
+                        )
+                      }
+                    >
+                      <i className="wc-icons--arrow-up"></i>
+                    </li>
+                    <li
+                      title="Sort descending"
+                      onClick={() =>
+                        this.setSortExpression(
+                          child.sortExpression,
+                          TABLE_SORT_DESCENDING
+                        )
+                      }
+                    >
+                      <i className="wc-icons--arrow-down"></i>
+                    </li>
+                  </ul>
                 </span>
               )}
             </GridHeaderCell>
@@ -332,11 +336,14 @@ export default class GridView extends Component {
       showTotalRows,
       alternatingRowStyle,
       onRowDataBound,
-      initialValuesOnEvents,
+      initializeValuesOnEvents,
       ...elementProps
     } = this.props;
-    if (initialValuesOnEvents && typeof initialValuesOnEvents === "function") {
-      initialValuesOnEvents();
+    if (
+      initializeValuesOnEvents &&
+      typeof initializeValuesOnEvents === "function"
+    ) {
+      initializeValuesOnEvents();
     }
     const { internalDataSource } = this.state;
     const totalRows = dataSource.length;
@@ -454,7 +461,7 @@ GridView.propTypes = {
   showRowNumbers: PropTypes.bool,
   showTotalRows: PropTypes.bool,
   alternatingRowStyle: PropTypes.object,
-  initialValuesOnEvents: PropTypes.func,
+  initializeValuesOnEvents: PropTypes.func,
 };
 GridView.defaultProps = {
   allowPaging: false,
@@ -478,6 +485,6 @@ GridView.defaultProps = {
   showRowNumbers: true,
   showTotalRows: true,
   alternatingRowStyle: null,
-  initialValuesOnEvents: null,
+  initializeValuesOnEvents: null,
 };
 GridView.displayName = "GridView";
