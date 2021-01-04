@@ -1,12 +1,17 @@
 import classnames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { TABLE_BODY_CELL_CLASS } from "../private/Constants";
+import {
+  TABLE_BODY_CELL_CLASS,
+  TABLE_CELL_HIDE_CLASS,
+} from "../private/Constants";
 
 function GridCell({ className, visible, ...props }) {
-  let tdClassName = classnames(TABLE_BODY_CELL_CLASS, className);
-  if (visible !== undefined && visible !== null && visible === false) {
-    tdClassName = classnames(tdClassName, "wc-table--cell-hide");
+  let tdClassName = null;
+  if (TABLE_BODY_CELL_CLASS) tdClassName = TABLE_BODY_CELL_CLASS;
+  if (className) tdClassName = classnames(tdClassName, className);
+  if (visible === false) {
+    tdClassName = classnames(tdClassName, TABLE_CELL_HIDE_CLASS);
   }
   return <td className={tdClassName} {...props} />;
 }
@@ -20,4 +25,5 @@ GridCell.defaultProps = {
   children: null,
   visible: true,
 };
-export default React.memo(GridCell);
+GridCell.displayName = "GridCell";
+export default GridCell;

@@ -12,6 +12,7 @@ import GridHeaderCell from "./GridHeaderCell";
 import Pagination from "./Pagination";
 import "./WebControls.css";
 import { resultOf } from "../private/AppUtility";
+import { defaultPagerSetting } from "../private/CustomPropTypes";
 
 export default class GridView extends Component {
   constructor(props) {
@@ -32,20 +33,19 @@ export default class GridView extends Component {
 
   onPaginationClick = (pagingObject) => {
     const { allowPaging } = this.props;
+    const { sortExpression, sortDirection } = this.state;
     if (allowPaging) {
       let selectedPageIndex = 0;
       if (pagingObject && pagingObject.hasOwnProperty("selectedPageIndex")) {
         selectedPageIndex = pagingObject.selectedPageIndex;
       }
-      this.setState({ selectedPageIndex: selectedPageIndex }, () => {
-        this.getPaginationData();
-      });
+      this.getPaginationData(sortExpression, sortDirection, selectedPageIndex);
     }
   };
-  getPaginationData = () => {
+  getPaginationData = (sortExpression, sortDirection, selectedPageIndex) => {
     const { pageSize, allowPaging, dataSource, allowSorting } = this.props;
-    const { sortExpression, sortDirection, selectedPageIndex } = this.state;
     let filterData = dataSource;
+
     if (allowSorting && sortExpression !== "" && sortDirection !== "") {
       const sortOrder = this.getSortOrder(sortExpression, sortDirection);
       filterData.sort(sortOrder);
@@ -55,7 +55,12 @@ export default class GridView extends Component {
       const endRec = startRec + pageSize;
       filterData = filterData.slice(startRec, endRec);
     }
-    this.setState({ internalDataSource: filterData });
+    this.setState({
+      sortExpression: sortExpression,
+      sortDirection: sortDirection,
+      selectedPageIndex: selectedPageIndex,
+      internalDataSource: filterData,
+    });
   };
   getSortOrder = (sortExp, sortDir) => {
     return (a, b) => {
@@ -121,6 +126,29 @@ export default class GridView extends Component {
     });
     return dataFieldNames;
   };
+
+  getPagerSettings = () => {
+    const { children } = this.props;
+    let pSettings = defaultPagerSetting;
+    React.Children.forEach(children, (pager) => {
+      if (pager.type.displayName === "PagerSettings") {
+        pSettings = pager.props;
+      }
+    });
+    return pSettings;
+  };
+  setSortExpression = (sortExp, sortDir) => {
+    const { sortExpression, sortDirection, selectedPageIndex } = this.state;
+    if (sortExpression !== sortExp || sortDirection !== sortDir) {
+      this.getPaginationData(sortExp, sortDir, selectedPageIndex);
+    }
+  };
+  getRowNumberStartIndex = () => {
+    const { pageSize } = this.props;
+    const { selectedPageIndex } = this.state;
+    let startRec = Math.max(selectedPageIndex, 0) * pageSize;
+    return startRec;
+  };
   getGridviewHeaderRow = (dataFieldNames) => {
     const {
       showHeader,
@@ -129,6 +157,7 @@ export default class GridView extends Component {
       dataSource,
     } = this.props;
     const _showHeader = showHeader && dataSource.length > 0 ? true : false;
+    const sortStyle = { textDecoration: "none", cursor: "pointer" };
     return (
       (_showHeader || showHeaderWhenEmpty) &&
       dataFieldNames.map((child, index) => {
@@ -136,18 +165,19 @@ export default class GridView extends Component {
           child.visible && (
             <GridHeaderCell
               key={index}
-              visible={child.visible}
               scope="col"
               title={child.headerText}
               style={child.headerStyle}
               className={child.headerCssClass}
+              abbr={
+                child.accessibleHeaderText ? child.accessibleHeaderText : null
+              }
             >
               {child.headerText}
               {allowSorting && child.sortExpression && (
                 <span style={{ float: "right" }}>
                   <a
-                    href="/#"
-                    style={{ textDecoration: "none" }}
+                    style={sortStyle}
                     title="Sort ascending order"
                     onClick={() =>
                       this.setSortExpression(
@@ -159,8 +189,7 @@ export default class GridView extends Component {
                     {"<"}
                   </a>
                   <a
-                    href="/#"
-                    style={{ textDecoration: "none" }}
+                    style={sortStyle}
                     title="Sort descending order"
                     onClick={() =>
                       this.setSortExpression(
@@ -179,31 +208,31 @@ export default class GridView extends Component {
       })
     );
   };
-  setSortExpression = (sortExp, sortDir) => {
-    const { sortExpression, sortDirection } = this.state;
-    if (sortExpression !== sortExp || sortDirection !== sortDir) {
-      this.setState({ sortExpression: sortExp, sortDirection: sortDir }, () => {
-        this.getPaginationData();
-      });
-    }
-  };
-  getRowNumberStartIndex = () => {
-    const { pageSize } = this.props;
-    const { selectedPageIndex } = this.state;
-    let startRec = Math.max(selectedPageIndex, 0) * pageSize;
-    return startRec;
-  };
+
   getTableBodyContent = (dataFieldNames, internalDataSource) => {
-    const { emptyDataText, showRowNumbers } = this.props;
+    const {
+      emptyDataText,
+      showRowNumbers,
+      alternatingRowStyle,
+      onRowDataBound,
+    } = this.props;
     const rowNumstart = showRowNumbers && this.getRowNumberStartIndex();
     if (dataFieldNames && dataFieldNames.length > 0) {
       const numberOfColumns = dataFieldNames.length;
       if (internalDataSource && internalDataSource.length > 0) {
         return internalDataSource.map((obj, rowIndex) => {
-          return (
-            <GridRow key={rowIndex}>
+          const isEvenRow = (rowIndex + 1) % 2 === 0;
+          const altRowStyle = isEvenRow ? alternatingRowStyle : null;
+          const bodyRow = (
+            <GridRow key={rowIndex} style={altRowStyle}>
               {showRowNumbers && (
-                <GridCell key={rowIndex}>{rowNumstart + rowIndex + 1}</GridCell>
+                <GridCell
+                  key="-1"
+                  scope="row"
+                  className="wc-table--serial-number"
+                >
+                  {rowNumstart + rowIndex + 1}
+                </GridCell>
               )}
               {dataFieldNames.map((field, colIndex) => {
                 let tdText = "";
@@ -225,7 +254,6 @@ export default class GridView extends Component {
                   field.visible && (
                     <GridCell
                       key={colIndex}
-                      visible={field.visible}
                       style={field.itemStyle}
                       className={field.itemCssClass}
                     >
@@ -236,6 +264,10 @@ export default class GridView extends Component {
               })}
             </GridRow>
           );
+          if (onRowDataBound && typeof onRowDataBound === "function") {
+            onRowDataBound({ RowIndex: rowIndex, Data: obj });
+          }
+          return bodyRow;
         });
       } else {
         return (
@@ -244,6 +276,36 @@ export default class GridView extends Component {
           </GridRow>
         );
       }
+    }
+  };
+  getGridviewFooterRow = (dataFieldNames, internalDataSource) => {
+    const { showFooter, showRowNumbers } = this.props;
+    if (showFooter && dataFieldNames.length > 0) {
+      const gridRow = (
+        <GridRow key={internalDataSource.length}>
+          {showRowNumbers && <GridCell key="-1"></GridCell>}
+          {dataFieldNames.map((field, colIndex) => {
+            let tdText = "";
+            if (field.visible && field.footerExpression) {
+              if (typeof field.footerExpression === "function")
+                tdText = resultOf(field.footerExpression());
+              else tdText = resultOf(field.footerExpression);
+            }
+            return (
+              field.visible && (
+                <GridCell
+                  key={colIndex}
+                  style={field.footerStyle}
+                  className={field.footerCssClass}
+                >
+                  {tdText}
+                </GridCell>
+              )
+            );
+          })}
+        </GridRow>
+      );
+      return gridRow;
     }
   };
 
@@ -266,15 +328,21 @@ export default class GridView extends Component {
       dataSource,
       dataKeyNames,
       emptyDataText,
-      pagerSettings,
       showRowNumbers,
       showTotalRows,
+      alternatingRowStyle,
+      onRowDataBound,
+      initialValuesOnEvents,
       ...elementProps
     } = this.props;
-
+    if (initialValuesOnEvents && typeof initialValuesOnEvents === "function") {
+      initialValuesOnEvents();
+    }
     const { internalDataSource } = this.state;
     const totalRows = dataSource.length;
     const dataFieldNames = this.getDataColumnsDetails();
+    const pagerSettings = this.getPagerSettings();
+
     let numberOfColumns = dataFieldNames.filter((obj) => {
       return obj.visible === true;
     }).length;
@@ -285,12 +353,21 @@ export default class GridView extends Component {
       dataFieldNames,
       internalDataSource
     );
-    const tblClassName = classnames(TABLE_CLASS, cssClass);
+    const footerRow = this.getGridviewFooterRow(
+      dataFieldNames,
+      internalDataSource
+    );
+
     const gridLineRules = this.getGridViewLineRules();
     let _outerBorder = outerBorder ? 1 : 0;
     if (gridLineRules === "none") {
       _outerBorder = 0;
     }
+    //Css Class
+    let tblClassName = null;
+    if (TABLE_CLASS) tblClassName = TABLE_CLASS;
+    if (cssClass) tblClassName = classnames(tblClassName, cssClass);
+
     return (
       <div>
         <table
@@ -308,9 +385,13 @@ export default class GridView extends Component {
           )}
           <thead>
             {headerRow && (
-              <GridRow>
+              <GridRow key="-1">
                 {showRowNumbers && (
-                  <GridHeaderCell key={-1} disabled={true}>
+                  <GridHeaderCell
+                    key={-1}
+                    disabled={true}
+                    className="wc-table--serial-number"
+                  >
                     {"#"}
                   </GridHeaderCell>
                 )}
@@ -320,6 +401,7 @@ export default class GridView extends Component {
           </thead>
           <tbody>{bodyRows}</tbody>
           <tfoot>
+            {footerRow}
             {allowPaging && (
               <Pagination
                 numberOfColumns={numberOfColumns}
@@ -338,8 +420,12 @@ export default class GridView extends Component {
 }
 GridView.propTypes = {
   id: PropTypes.string.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]),
   dataSource: PropTypes.arrayOf(PropTypes.object),
+  onRowDataBound: PropTypes.func,
   cssClass: PropTypes.string,
   allowPaging: PropTypes.bool,
   pageSize: PropTypes.number,
@@ -365,13 +451,10 @@ GridView.propTypes = {
   outerBorder: PropTypes.bool,
   dataKeyNames: PropTypes.arrayOf(PropTypes.string),
   emptyDataText: PropTypes.string,
-  pagerSettings: PropTypes.shape({
-    className: PropTypes.string,
-    outerBorder: PropTypes.bool,
-    align: PropTypes.oneOf(["left", "center", "right"]),
-  }),
   showRowNumbers: PropTypes.bool,
   showTotalRows: PropTypes.bool,
+  alternatingRowStyle: PropTypes.object,
+  initialValuesOnEvents: PropTypes.func,
 };
 GridView.defaultProps = {
   allowPaging: false,
@@ -380,22 +463,21 @@ GridView.defaultProps = {
   showFooter: false,
   showHeader: true,
   showHeaderWhenEmpty: false,
+  cssClass: null,
   width: null,
   height: null,
   cellSpacing: 0,
-  cellPadding: 2,
+  cellPadding: null,
   caption: null,
   gridLines: "Both",
   outerBorder: true,
   dataSource: [],
   dataKeyNames: null,
+  onRowDataBound: null,
   emptyDataText: "No data available.",
-  pagerSettings: {
-    className: "",
-    outerBorder: true,
-    align: "left",
-  },
   showRowNumbers: true,
   showTotalRows: true,
+  alternatingRowStyle: null,
+  initialValuesOnEvents: null,
 };
 GridView.displayName = "GridView";

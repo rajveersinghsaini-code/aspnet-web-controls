@@ -25,7 +25,12 @@ Then...
 GridView example:
 
 ```js
-import { GridView, Columns, BoundField } from "aspnet-web-controls";
+import {
+  GridView,
+  Columns,
+  BoundField,
+  PagerSettings,
+} from "aspnet-web-controls";
 
 function App() {
   let sampleDataSource = [
@@ -35,18 +40,25 @@ function App() {
     { Name: "Rajiv", Id: 107, Salary: 20000, Currency: "GBP" },
     { Name: "Shubham", Id: 108, Salary: 10000, Currency: "GBP" },
   ];
-  const onButtonClick = (name, salary) => {
-    alert(`${name} has ${salary}`);
+  let _totalSalary = 0;
+  const onRowDataBound = (gridRow) => {
+    _totalSalary = _totalSalary + gridRow.Data.Salary * 73.5;
   };
   return (
     <div style={{ padding: "10px" }}>
       <GridView
         id="grdHelloWorld"
-        dataSource={sampleDataSource}
+        dataSource={dataSource}
         emptyDataText="no data"
         width={500}
         allowPaging={true}
         allowSorting={true}
+        showFooter={true}
+        caption="Employee Details"
+        onRowDataBound={onRowDataBound}
+        initialValuesOnEvents={() => {
+          _totalSalary = 0;
+        }}
       >
         <Columns>
           <BoundField
@@ -59,17 +71,22 @@ function App() {
             headerText="Name"
             dataField="Name"
             sortExpression="Name"
+            accessibleHeaderText="hello world"
           />
           <BoundField
             headerText="Salary (INR)"
             dataField="Salary"
             sortExpression="Salary"
             itemStyle={{ textAlign: "right" }}
+            footerExpression={() => <b>Total :</b>}
+            footerStyle={{ textAlign: "right" }}
           />
           <BoundField
             headerText="Calculated Field"
             dataExpression={({ Salary }) => `${(Salary * 73.5).toFixed(2)}`}
             itemStyle={{ textAlign: "right" }}
+            footerExpression={() => `$${_totalSalary.toFixed(2)}`}
+            footerStyle={{ textAlign: "right" }}
           />
           <BoundField
             headerText="Action"
@@ -78,18 +95,44 @@ function App() {
                 Click me
               </button>
             )}
+            footerExpression={() => (
+              <button onClick={() => alert("Add new records")}>Add Item</button>
+            )}
           />
         </Columns>
+        <PagerSettings pageButtonCount={5} />
       </GridView>
     </div>
   );
 }
+
 export default App;
 ```
 
 ## Options
 
 aspnet-gridview support paging and sorting
+
+pagerSettings component props
+
+```js
+import { PagerSettings } from "aspnet-web-controls";
+
+<PagerSettings pageButtonCount={5} className="pagination" outerBorder={false} align="center" firstPageText="First" lastPageText="Last" nextPageText=">" previousPageText="<"  style={{backgroundColor:"red"}} pagerType="list"/>
+
+{
+  className: string,
+  outerBorder: bool,
+  align: oneOf(["left", "center", "right"]),
+  pageButtonCount: number,
+  firstPageText: string,
+  lastPageText: string,
+  nextPageText: string,
+  previousPageText: string,
+  style: object,
+  pagerType: oneOf(["list", "table"]),
+}
+```
 
 For libraries, we _also_ recommend leaving it in `dependencies`:
 

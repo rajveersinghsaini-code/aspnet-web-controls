@@ -3,25 +3,30 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import GridRow from "./GridRow";
 import GridCell from "./GridCell";
+import PagerItem from "./PagerItem";
 import {
   PAGINATION_ACTIVE_PAGE_CLASS,
   PAGINATION_BORDER_NOBORDER_CLASS,
 } from "../private/Constants";
+import { pagerSetting, defaultPagerSetting } from "../private/CustomPropTypes";
+import "./Pagination.css";
 
 export default class Pagination extends Component {
   constructor(props) {
     super(props);
     const { totalRows, pageSize } = this.props;
-    const _maxPaging = 6;
     const _totalPages =
       totalRows > pageSize && pageSize > 0
         ? Math.floor(totalRows / pageSize) + (totalRows % pageSize > 0 ? 1 : 0)
         : 0;
+    const pageButtonCount = this.props.pagerSettings.pageButtonCount - 1;
+    const showNextButton =
+      _totalPages > this.props.pagerSettings.pageButtonCount;
     this.state = {
       currentPageNumber: 1,
       totalPages: _totalPages,
-      maxPaging: _maxPaging,
-      showNextButton: true,
+      pageButtonCount: pageButtonCount,
+      showNextButton: showNextButton,
       showPreviousButton: false,
       selectedPageIndex: 0,
     };
@@ -47,8 +52,8 @@ export default class Pagination extends Component {
     }
   };
   setLastPageClick = () => {
-    const { totalPages, maxPaging } = this.state;
-    const lastPage = totalPages - maxPaging;
+    const { totalPages, pageButtonCount } = this.state;
+    const lastPage = totalPages - pageButtonCount;
     this.setState(
       {
         currentPageNumber: lastPage,
@@ -94,29 +99,25 @@ export default class Pagination extends Component {
       }
     );
   };
-  setCurrentPageClick = (event) => {
-    if (event) {
-      const pageButton = event.target;
-      pageButton.className = PAGINATION_ACTIVE_PAGE_CLASS;
-      this.setState({ selectedPageIndex: pageButton.value - 1 }, () => {
-        this.renderPagingData();
-      });
-    }
+  setCurrentPageClick = (pageNumber) => {
+    this.setState({ selectedPageIndex: pageNumber - 1 }, () => {
+      this.renderPagingData();
+    });
   };
 
   getNextPageNumber = () => {
-    const { currentPageNumber, maxPaging, totalPages } = this.state;
-    if (maxPaging >= totalPages) {
+    const { currentPageNumber, pageButtonCount, totalPages } = this.state;
+    if (pageButtonCount >= totalPages) {
       return currentPageNumber + totalPages - 1;
     }
-    return currentPageNumber + maxPaging;
+    return currentPageNumber + pageButtonCount;
   };
   getPreviousPageNumber = () => {
     return this.state.currentPageNumber - 1;
   };
   getNextPageButtonVisiblilty = () => {
-    const { maxPaging, totalPages } = this.state;
-    return totalPages > maxPaging;
+    const { pageButtonCount, totalPages } = this.state;
+    return totalPages > pageButtonCount;
   };
 
   renderPagingData = () => {
@@ -142,18 +143,26 @@ export default class Pagination extends Component {
       showNextButton,
       selectedPageIndex,
     } = this.state;
-    let pageCols = [];
+    let pagerItems = [];
+
+    const pagerType = pagerSettings.pagerType;
 
     if (showPreviousButton) {
-      pageCols.push(
-        <GridCell key={-1}>
-          <button onClick={this.setFirstPageClick}>{"First"}</button>
-        </GridCell>
+      pagerItems.push(
+        <PagerItem
+          key={-1}
+          onPageClick={this.setFirstPageClick}
+          pageNumber={pagerSettings.firstPageText}
+          pagerType={pagerType}
+        />
       );
-      pageCols.push(
-        <GridCell key={0}>
-          <button onClick={this.setPreviousPageClick}>{"<"}</button>
-        </GridCell>
+      pagerItems.push(
+        <PagerItem
+          key={0}
+          onPageClick={this.setPreviousPageClick}
+          pageNumber={pagerSettings.previousPageText}
+          pagerType={pagerType}
+        />
       );
     }
 
@@ -165,55 +174,60 @@ export default class Pagination extends Component {
     ) {
       const isPageSelected = pageIndex === selectedPageIndex + 1;
       const cssName = isPageSelected ? PAGINATION_ACTIVE_PAGE_CLASS : "";
-      pageCols.push(
-        <GridCell key={pageIndex}>
-          <button
-            className={cssName}
-            onClick={this.setCurrentPageClick}
-            value={pageIndex}
-            disabled={isPageSelected}
-          >
-            {pageIndex}
-          </button>
-        </GridCell>
+      pagerItems.push(
+        <PagerItem
+          key={pageIndex}
+          onPageClick={() => this.setCurrentPageClick(pageIndex)}
+          pageNumber={pageIndex}
+          pagerType={pagerType}
+          isPageSelected={isPageSelected}
+        />
       );
     }
     if (showNextButton && this.getNextPageButtonVisiblilty()) {
-      pageCols.push(
-        <GridCell key={totalPages}>
-          <button onClick={this.setNextPageClick}>{">"}</button>
-        </GridCell>
+      pagerItems.push(
+        <PagerItem
+          key={totalPages + 1}
+          onPageClick={this.setNextPageClick}
+          pageNumber={pagerSettings.nextPageText}
+          pagerType={pagerType}
+        />
       );
-      pageCols.push(
-        <GridCell key={totalPages + 1}>
-          <button onClick={this.setLastPageClick}>{"Last"}</button>
-        </GridCell>
+      pagerItems.push(
+        <PagerItem
+          key={totalPages + 2}
+          onPageClick={this.setLastPageClick}
+          pageNumber={pagerSettings.lastPageText}
+          pagerType={pagerType}
+        />
       );
     }
 
     let tblClassName = pagerSettings.className;
-    if (pagerSettings && pagerSettings.outerBorder === false)
-      tblClassName = classnames(
-        PAGINATION_BORDER_NOBORDER_CLASS,
-        pagerSettings.className
-      );
+
+    const hideOuterBorder =
+      pagerSettings.outerBorder === false
+        ? PAGINATION_BORDER_NOBORDER_CLASS
+        : null;
 
     return (
       <React.Fragment>
         {totalPages > 0 && totalRows > 0 && (
-          <GridRow>
+          <GridRow className={tblClassName} style={pagerSettings.style}>
             <GridCell
               colSpan={numberOfColumns}
+              className={hideOuterBorder}
               align={pagerSettings.align}
-              className={tblClassName}
             >
-              <div {...props}>
+              {pagerType === "list" ? (
+                <ul className="wc-list-pagination">{pagerItems}</ul>
+              ) : (
                 <table cellSpacing="10" border="0" rules="none">
                   <tbody>
-                    <GridRow>{pageCols}</GridRow>
+                    <GridRow>{pagerItems}</GridRow>
                   </tbody>
                 </table>
-              </div>
+              )}
             </GridCell>
           </GridRow>
         )}
@@ -226,20 +240,13 @@ Pagination.propTypes = {
   pageSize: PropTypes.number.isRequired,
   numberOfColumns: PropTypes.number.isRequired,
   pageIndexChanging: PropTypes.func.isRequired,
-  pagerSettings: PropTypes.shape({
-    className: PropTypes.string,
-    outerBorder: PropTypes.bool,
-    align: PropTypes.oneOf(["left", "center", "right"]),
-  }),
+  pagerSettings: pagerSetting,
 };
 Pagination.defaultProps = {
   totalRows: 0,
   pageSize: 0,
   numberOfColumns: 0,
   pageIndexChanging: null,
-  pagerSettings: {
-    className: "",
-    outerBorder: true,
-    align: "left",
-  },
+  pagerSettings: defaultPagerSetting,
 };
+Pagination.displayName = "Pagination";

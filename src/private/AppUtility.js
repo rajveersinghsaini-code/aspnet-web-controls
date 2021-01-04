@@ -24,3 +24,6 @@ export function filterFocusableItems(el) {
   }
   return null;
 }
+export function getUniqueRandomNumber() {
+  return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
+}
