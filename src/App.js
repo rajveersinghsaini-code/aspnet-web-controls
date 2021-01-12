@@ -1,14 +1,7 @@
 //import logo from "./logo.svg";
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import {
-  GridView,
-  Columns,
-  BoundField,
-  PagerSettings,
-  DropDownList,
-} from "./main";
-import { pagerSetting } from "./private/CustomPropTypes";
+import asp from "./main";
 
 function App() {
   const [selected, setSelected] = useState("105");
@@ -85,32 +78,29 @@ function App() {
 
   return (
     <div style={{ padding: "10px" }}>
-      <GridView
+      <asp.GridView
         id="grdHelloWorld"
         dataSource={sampleDataSource}
         emptyDataText="no data"
         allowPaging={true}
         allowSorting={true}
         showFooter={true}
+        pageSize={3}
         onRowDataBound={onRowDataBound}
         initializeValuesOnEvents={() => {
           _totalSalary = 0;
         }}
+        className="table"
       >
-        <Columns>
-          <BoundField
-            headerText="Id"
-            dataField="Id"
-            sortExpression="Id"
-            visible={false}
-          />
-          <BoundField
+        <asp.Columns>
+          <asp.BoundField headerText="Id" dataField="Id" sortExpression="Id" />
+          <asp.BoundField
             headerText="Name"
             dataField="Name"
             sortExpression="Name"
             accessibleHeaderText="hello world"
           />
-          <BoundField
+          <asp.BoundField
             headerText="Salary (INR)"
             dataField="Salary"
             sortExpression="Salary"
@@ -118,14 +108,14 @@ function App() {
             footerExpression={() => <b>Total :</b>}
             footerStyle={{ textAlign: "right" }}
           />
-          <BoundField
+          <asp.BoundField
             headerText="Calculated Field"
             dataExpression={({ Salary }) => `${(Salary * 73.5).toFixed(2)}`}
             itemStyle={{ textAlign: "right" }}
             footerExpression={() => `$${_totalSalary.toFixed(2)}`}
             footerStyle={{ textAlign: "right" }}
           />
-          <BoundField
+          <asp.BoundField
             headerText="Action"
             dataExpression={(objRow) => (
               <button
@@ -135,43 +125,34 @@ function App() {
                 Click me
               </button>
             )}
-            footerExpression={() => (
-              <button onClick={() => alert("Add new records")}>Add Item</button>
-            )}
           />
-        </Columns>
-        <PagerSettings
-          className="pagination"
-          pagerType="list"
-          outerBorder={false}
-        />
-      </GridView>
+        </asp.Columns>
+      </asp.GridView>
       <div>
-        <DropDownList
+        <asp.DropDownList
           dataSource={dropdownDataSource}
           dataValueField="Id"
           dataTextField="Name"
           selectedValue={selected}
           onSelectedIndexChanged={setSelected}
           labelText="Employee Name : "
-          defaultItem={{ text: "Please Select", value: "-1" }}
+          defaultListItem={{ text: "Please Select", value: "-1" }}
           className="form-control"
           labelCssClass="form-label"
         />
-        <DropDownList
-          dataSource={dropdownDataSource}
-          dataValueField="Id"
-          dataTextField="Name"
-          selectedValue={selected}
-          onSelectedIndexChanged={setSelected}
-          labelText="Employee Name : "
-          defaultItem={{ text: "Please Select", value: "-1" }}
-          className="form-control"
-          labelCssClass="form-label"
-        />
+        <asp.DropDownList
+          defaultListItem={{
+            text: "Please Select",
+            value: "0",
+          }}
+          selectedValue=""
+        >
+          <asp.ListItem text="Rajveer"></asp.ListItem>
+          <asp.ListItem text="Rohan" value="103" enabled={false}></asp.ListItem>
+          <asp.ListItem text="Mohan" value="104"></asp.ListItem>
+        </asp.DropDownList>
       </div>
     </div>
   );
 }
-
 export default App;

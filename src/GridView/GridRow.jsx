@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { TABLE_BODY_ROW_CLASS } from "../private/Constants";
 
-function GridRow({ className, ...props }) {
+export default function GridRow({ className, ...props }) {
   let trClassName = null;
   if (TABLE_BODY_ROW_CLASS) trClassName = TABLE_BODY_ROW_CLASS;
   if (className) classnames(trClassName, className);
@@ -19,4 +19,3 @@ GridRow.defaultProps = {
   children: null,
 };
 GridRow.displayName = "GridRow";
-export default GridRow;

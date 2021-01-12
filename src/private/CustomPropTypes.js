@@ -12,16 +12,38 @@ export const pagerSetting = shape({
   previousPageText: string,
   style: object,
   pagerType: oneOf(["list", "table"]),
+  itemCssClass: string,
+  linkCssClass: string,
+  activeCssClass: string,
 });
 export const defaultPagerSetting = {
-  className: null,
-  outerBorder: true,
+  className: "wc-pagination",
+  outerBorder: false,
   align: "left",
   pageButtonCount: 7,
   firstPageText: "First",
   lastPageText: "Last",
   nextPageText: ">",
   previousPageText: "<",
-  style: {},
+  style: null,
   pagerType: "table",
+  itemCssClass: "wc-page-item",
+  linkCssClass: "wc-page-link",
+  activeCssClass: "active",
+};
+
+//ListItem
+export const listItemProps = shape({
+  text: string,
+  value: string,
+  selected: bool,
+  enabled: bool,
+});
+
+//ListItem
+export const defaultListItem = {
+  text: "",
+  value: null,
+  selected: false,
+  enabled: true,
 };

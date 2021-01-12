@@ -13,6 +13,7 @@ import Pagination from "./Pagination";
 import "./WebControls.css";
 import { resultOf } from "../private/AppUtility";
 import { defaultPagerSetting } from "../private/CustomPropTypes";
+import IconArrow from "../private/IconArrow";
 
 export default class GridView extends Component {
   constructor(props) {
@@ -157,11 +158,6 @@ export default class GridView extends Component {
       dataSource,
     } = this.props;
     const _showHeader = showHeader && dataSource.length > 0 ? true : false;
-    const sortStyle = {
-      textDecoration: "none",
-      cursor: "pointer",
-      display: "table-cell",
-    };
     return (
       (_showHeader || showHeaderWhenEmpty) &&
       dataFieldNames.map((child, index) => {
@@ -190,7 +186,11 @@ export default class GridView extends Component {
                         )
                       }
                     >
-                      <i className="wc-icons--arrow-up"></i>
+                      <IconArrow
+                        arrowType="up"
+                        arrowSize={4}
+                        style={{ display: "inherit" }}
+                      />
                     </li>
                     <li
                       title="Sort descending"
@@ -200,8 +200,13 @@ export default class GridView extends Component {
                           TABLE_SORT_DESCENDING
                         )
                       }
+                      style={{ marginTop: "3px" }}
                     >
-                      <i className="wc-icons--arrow-down"></i>
+                      <IconArrow
+                        arrowType="down"
+                        arrowSize={4}
+                        style={{ display: "inherit" }}
+                      />
                     </li>
                   </ul>
                 </span>
@@ -398,6 +403,7 @@ export default class GridView extends Component {
                     key={-1}
                     disabled={true}
                     className="wc-table--serial-number"
+                    scope="col"
                   >
                     {"#"}
                   </GridHeaderCell>
