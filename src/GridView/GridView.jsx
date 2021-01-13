@@ -161,6 +161,12 @@ export default class GridView extends Component {
     return (
       (_showHeader || showHeaderWhenEmpty) &&
       dataFieldNames.map((child, index) => {
+        const headerText =
+          child.visible &&
+          child.headerExpression &&
+          typeof child.headerExpression === "function"
+            ? resultOf(child.headerExpression())
+            : child.headerText;
         return (
           child.visible && (
             <GridHeaderCell
@@ -173,7 +179,7 @@ export default class GridView extends Component {
                 child.accessibleHeaderText ? child.accessibleHeaderText : null
               }
             >
-              {child.headerText}
+              {headerText}
               {allowSorting && child.sortExpression && (
                 <span className="wc-table--sorting-container">
                   <ul>
@@ -412,8 +418,8 @@ export default class GridView extends Component {
               </GridRow>
             )}
           </thead>
-          <tbody>{bodyRows}</tbody>
-          <tfoot>
+          <tbody>
+            {bodyRows}
             {footerRow}
             {allowPaging && (
               <Pagination
@@ -424,7 +430,8 @@ export default class GridView extends Component {
                 pageIndexChanging={this.onPaginationClick}
               />
             )}
-          </tfoot>
+          </tbody>
+          <tfoot></tfoot>
         </table>
         {showTotalRows && dataSource && <span>Total Records: {totalRows}</span>}
       </div>

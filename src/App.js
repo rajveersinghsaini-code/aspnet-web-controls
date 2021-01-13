@@ -55,6 +55,13 @@ function App() {
     { Name: "Rajveer", Id: 113, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 114, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 115, Salary: 10000, Currency: "GBP" },
+    {
+      Name: "Rajveer",
+      Id: 115,
+      Salary: 10000,
+      Currency: "GBP",
+      isChecked: true,
+    },
   ];
   //dataSource = [];
   const onButtonClick = (name, salary) => {
@@ -83,9 +90,7 @@ function App() {
         dataSource={sampleDataSource}
         emptyDataText="no data"
         allowPaging={true}
-        allowSorting={true}
         showFooter={true}
-        pageSize={3}
         onRowDataBound={onRowDataBound}
         initializeValuesOnEvents={() => {
           _totalSalary = 0;

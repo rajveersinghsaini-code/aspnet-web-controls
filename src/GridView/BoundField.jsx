@@ -9,6 +9,7 @@ BoundField.propTypes = {
   dataFormatString: PropTypes.string,
   itemStyleCssClass: PropTypes.string,
   visible: PropTypes.bool,
+  headerExpression: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   dataExpression: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   footerExpression: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   sortExpression: PropTypes.string,
@@ -19,6 +20,7 @@ BoundField.propTypes = {
   accessibleHeaderText: PropTypes.string,
   footerStyle: PropTypes.object,
   footerCssClass: PropTypes.string,
+  fieldType: PropTypes.string,
 };
 BoundField.defaultProps = {
   headerText: "",
@@ -26,6 +28,7 @@ BoundField.defaultProps = {
   dataFormatString: null,
   itemStyleCssClass: null,
   visible: true,
+  headerExpression: null,
   dataExpression: null,
   footerExpression: null,
   sortExpression: null,
@@ -36,5 +39,6 @@ BoundField.defaultProps = {
   footerCssClass: null,
   itemCssClass: null,
   accessibleHeaderText: null,
+  fieldType: "BoundField",
 };
 BoundField.displayName = "BoundField";
