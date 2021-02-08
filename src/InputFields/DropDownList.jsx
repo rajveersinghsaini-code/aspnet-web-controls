@@ -3,20 +3,21 @@ import PropTypes from "prop-types";
 import { getUniqueRandomNumber } from "../private/AppUtility";
 import { listItemProps, defaultListItem } from "../private/CustomPropTypes";
 
-export default function DropDownList({
-  id,
-  dataSource,
-  dataTextField,
-  dataValueField,
-  onSelectedIndexChanged,
-  labelText,
-  selectedValue,
-  defaultListItem,
-  labelCssClass,
-  className,
-  children,
-  ...props
-}) {
+const DropDownList = (props) => {
+  const {
+    id,
+    dataSource,
+    dataTextField,
+    dataValueField,
+    onSelectedIndexChanged,
+    labelText,
+    selectedValue,
+    defaultListItem,
+    labelClassName,
+    name,
+    children,
+    ...restProps
+  } = props;
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(selectedValue);
   const [controlId, setControlId] = useState(null);
@@ -97,34 +98,35 @@ export default function DropDownList({
   return (
     <React.Fragment>
       {labelText ? (
-        <label htmlFor={controlId} className={labelCssClass}>
+        <label htmlFor={controlId} className={labelClassName}>
           {labelText}
         </label>
       ) : null}
       <select
         id={controlId}
-        className={className}
         onChange={handleChange}
         value={selected}
-        {...props}
+        name={name ? name : controlId}
+        {...restProps}
       >
         {renderedOptions}
       </select>
     </React.Fragment>
   );
-}
+};
 
 DropDownList.propTypes = {
   id: PropTypes.string,
+  name: PropTypes.string,
   dataSource: PropTypes.arrayOf(PropTypes.object),
   dataTextField: PropTypes.string,
   dataValueField: PropTypes.string,
   onSelectedIndexChanged: PropTypes.func,
-  labelText: PropTypes.string,
-  className: PropTypes.string,
   selectedValue: PropTypes.string,
+  labelText: PropTypes.string,
+  labelClassName: PropTypes.string,
+  className: PropTypes.string,
   defaultListItem: listItemProps,
-  labelCssClass: PropTypes.string,
   children: PropTypes.oneOfType([
     listItemProps,
     PropTypes.arrayOf(listItemProps),
@@ -132,6 +134,7 @@ DropDownList.propTypes = {
 };
 DropDownList.defaultProps = {
   id: "",
+  name: "",
   dataSource: [],
   dataTextField: null,
   dataValueField: null,
@@ -140,5 +143,7 @@ DropDownList.defaultProps = {
   className: null,
   selectedValue: "",
   defaultListItem: defaultListItem,
-  labelCssClass: null,
+  labelClassName: null,
 };
+
+export default DropDownList;

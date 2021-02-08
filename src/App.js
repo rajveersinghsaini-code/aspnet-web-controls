@@ -90,6 +90,7 @@ function App() {
         dataSource={sampleDataSource}
         emptyDataText="no data"
         allowPaging={true}
+        pageSize={3}
         showFooter={true}
         onRowDataBound={onRowDataBound}
         initializeValuesOnEvents={() => {
@@ -132,6 +133,13 @@ function App() {
             )}
           />
         </asp.Columns>
+        <asp.PagerSettings
+          pagerType="list"
+          className="pagination"
+          itemCssClass="page-item"
+          linkCssClass="page-link"
+          activeCssClass="active"
+        ></asp.PagerSettings>
       </asp.GridView>
       <div>
         <asp.DropDownList
@@ -143,20 +151,64 @@ function App() {
           labelText="Employee Name : "
           defaultListItem={{ text: "Please Select", value: "-1" }}
           className="form-control"
-          labelCssClass="form-label"
+          labelClassName="form-label"
         />
         <asp.DropDownList
+          labelText="Employee Name"
+          labelClassName="form-label"
           defaultListItem={{
             text: "Please Select",
             value: "0",
           }}
           selectedValue=""
+          style={{ width: "500px" }}
+          id="ddlEmployee"
+          className="form-control"
         >
           <asp.ListItem text="Rajveer"></asp.ListItem>
           <asp.ListItem text="Rohan" value="103" enabled={false}></asp.ListItem>
           <asp.ListItem text="Mohan" value="104"></asp.ListItem>
         </asp.DropDownList>
       </div>
+      <asp.TextBox labelText="Employee Name" id="imployeeName"></asp.TextBox>
+
+      <asp.Panel className="input-group">
+        <asp.Label className="input-group-addon" id="basic-addon1">
+          @
+        </asp.Label>
+        <asp.TextBox className="form-control" placeholder="Username" />
+      </asp.Panel>
+      <asp.Panel className="input-group">
+        <asp.TextBox
+          className="form-control"
+          placeholder="Recipient's username"
+          aria-describedby="basic-addon2"
+        />
+        <asp.Label className="input-group-addon" id="basic-addon2">
+          @example.com
+        </asp.Label>
+      </asp.Panel>
+
+      <asp.Panel className="input-group">
+        <asp.Label className="input-group-addon">$</asp.Label>
+        <asp.TextBox
+          className="form-control"
+          aria-label="Amount (to the nearest dollar)"
+        />
+        <span className="input-group-addon">.00</span>
+      </asp.Panel>
+
+      <label htmlFor="basic-url">Your vanity URL</label>
+      <asp.Panel className="input-group">
+        <asp.Label className="input-group-addon" id="basic-addon3">
+          https://example.com/users/
+        </asp.Label>
+        <asp.TextBox
+          className="form-control"
+          id="basic-url"
+          aria-describedby="basic-addon3"
+        />
+      </asp.Panel>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 {
   "name": "aspnet-web-controls",
-  "version": "1.0.3",
-  "description": "Generate grid view in react format same as asp.net form syntax.",
+  "version": "1.0.4",
+  "description": "A simple React package for creating web controls similar to asp.net syntax with react format.",
   "main": "build/index.js",
   "private": false,
   "types": "./index.d.ts",
