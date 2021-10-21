@@ -1,14 +1,7 @@
 //import logo from "./logo.svg";
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import {
-  GridView,
-  Columns,
-  BoundField,
-  PagerSettings,
-  DropDownList,
-} from "./main";
-import { pagerSetting } from "./private/CustomPropTypes";
+import asp from "./main";
 
 function App() {
   const [selected, setSelected] = useState("105");
@@ -62,6 +55,13 @@ function App() {
     { Name: "Rajveer", Id: 113, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 114, Salary: 10000, Currency: "GBP" },
     { Name: "Rajveer", Id: 115, Salary: 10000, Currency: "GBP" },
+    {
+      Name: "Rajveer",
+      Id: 115,
+      Salary: 10000,
+      Currency: "GBP",
+      isChecked: true,
+    },
   ];
   //dataSource = [];
   const onButtonClick = (name, salary) => {
@@ -85,55 +85,44 @@ function App() {
 
   return (
     <div style={{ padding: "10px" }}>
-      <GridView
+      <asp.GridView
         id="grdHelloWorld"
         dataSource={sampleDataSource}
         emptyDataText="no data"
-        width={500}
         allowPaging={true}
-        allowSorting={true}
+        pageSize={3}
         showFooter={true}
         onRowDataBound={onRowDataBound}
-        initialValuesOnEvents={() => {
+        initializeValuesOnEvents={() => {
           _totalSalary = 0;
         }}
-        className="table table-sm "
+        className="table"
       >
-        <Columns>
-          <BoundField
-            headerText="Id"
-            dataField="Id"
-            sortExpression="Id"
-            visible={false}
-            headerCssClass="thead-dark"
-          />
-          <BoundField
+        <asp.Columns>
+          <asp.BoundField headerText="Id" dataField="Id" sortExpression="Id" />
+          <asp.BoundField
             headerText="Name"
             dataField="Name"
             sortExpression="Name"
             accessibleHeaderText="hello world"
-            headerCssClass="thead-dark"
           />
-          <BoundField
+          <asp.BoundField
             headerText="Salary (INR)"
             dataField="Salary"
             sortExpression="Salary"
             itemStyle={{ textAlign: "right" }}
             footerExpression={() => <b>Total :</b>}
             footerStyle={{ textAlign: "right" }}
-            headerCssClass="thead-dark"
           />
-          <BoundField
+          <asp.BoundField
             headerText="Calculated Field"
             dataExpression={({ Salary }) => `${(Salary * 73.5).toFixed(2)}`}
             itemStyle={{ textAlign: "right" }}
             footerExpression={() => `$${_totalSalary.toFixed(2)}`}
             footerStyle={{ textAlign: "right" }}
-            headerCssClass="thead-dark"
           />
-          <BoundField
+          <asp.BoundField
             headerText="Action"
-            headerCssClass="thead-dark"
             dataExpression={(objRow) => (
               <button
                 className="btn btn-sm  btn-primary"
@@ -142,43 +131,85 @@ function App() {
                 Click me
               </button>
             )}
-            footerExpression={() => (
-              <button onClick={() => alert("Add new records")}>Add Item</button>
-            )}
           />
-        </Columns>
-        <PagerSettings
-          className="pagination"
+        </asp.Columns>
+        <asp.PagerSettings
           pagerType="list"
-          outerBorder={false}
-        />
-      </GridView>
+          className="pagination"
+          itemCssClass="page-item"
+          linkCssClass="page-link"
+          activeCssClass="active"
+        ></asp.PagerSettings>
+      </asp.GridView>
       <div>
-        <DropDownList
+        <asp.DropDownList
           dataSource={dropdownDataSource}
           dataValueField="Id"
           dataTextField="Name"
           selectedValue={selected}
           onSelectedIndexChanged={setSelected}
           labelText="Employee Name : "
-          defaultItem={{ text: "Please Select", value: "-1" }}
+          defaultListItem={{ text: "Please Select", value: "-1" }}
           className="form-control"
-          labelCssClass="form-label"
+          labelClassName="form-label"
         />
-        <DropDownList
-          dataSource={dropdownDataSource}
-          dataValueField="Id"
-          dataTextField="Name"
-          selectedValue={selected}
-          onSelectedIndexChanged={setSelected}
-          labelText="Employee Name : "
-          defaultItem={{ text: "Please Select", value: "-1" }}
+        <asp.DropDownList
+          labelText="Employee Name"
+          labelClassName="form-label"
+          defaultListItem={{
+            text: "Please Select",
+            value: "0",
+          }}
+          selectedValue=""
+          style={{ width: "500px" }}
+          id="ddlEmployee"
           className="form-control"
-          labelCssClass="form-label"
-        />
+        >
+          <asp.ListItem text="Rajveer"></asp.ListItem>
+          <asp.ListItem text="Rohan" value="103" enabled={false}></asp.ListItem>
+          <asp.ListItem text="Mohan" value="104"></asp.ListItem>
+        </asp.DropDownList>
       </div>
+      <asp.TextBox labelText="Employee Name" id="imployeeName"></asp.TextBox>
+
+      <asp.Panel className="input-group">
+        <asp.Label className="input-group-addon" id="basic-addon1">
+          @
+        </asp.Label>
+        <asp.TextBox className="form-control" placeholder="Username" />
+      </asp.Panel>
+      <asp.Panel className="input-group">
+        <asp.TextBox
+          className="form-control"
+          placeholder="Recipient's username"
+          aria-describedby="basic-addon2"
+        />
+        <asp.Label className="input-group-addon" id="basic-addon2">
+          @example.com
+        </asp.Label>
+      </asp.Panel>
+
+      <asp.Panel className="input-group">
+        <asp.Label className="input-group-addon">$</asp.Label>
+        <asp.TextBox
+          className="form-control"
+          aria-label="Amount (to the nearest dollar)"
+        />
+        <span className="input-group-addon">.00</span>
+      </asp.Panel>
+
+      <label htmlFor="basic-url">Your vanity URL</label>
+      <asp.Panel className="input-group">
+        <asp.Label className="input-group-addon" id="basic-addon3">
+          https://example.com/users/
+        </asp.Label>
+        <asp.TextBox
+          className="form-control"
+          id="basic-url"
+          aria-describedby="basic-addon3"
+        />
+      </asp.Panel>
     </div>
   );
 }
-
 export default App;

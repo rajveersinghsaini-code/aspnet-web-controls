@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import {
   TABLE_CLASS,
   TABLE_SORT_ASCENDING,
@@ -13,6 +13,7 @@ import Pagination from "./Pagination";
 import "./WebControls.css";
 import { resultOf } from "../private/AppUtility";
 import { defaultPagerSetting } from "../private/CustomPropTypes";
+import IconArrow from "../private/IconArrow";
 
 export default class GridView extends Component {
   constructor(props) {
@@ -157,10 +158,15 @@ export default class GridView extends Component {
       dataSource,
     } = this.props;
     const _showHeader = showHeader && dataSource.length > 0 ? true : false;
-    const sortStyle = { textDecoration: "none", cursor: "pointer" };
     return (
       (_showHeader || showHeaderWhenEmpty) &&
       dataFieldNames.map((child, index) => {
+        const headerText =
+          child.visible &&
+          child.headerExpression &&
+          typeof child.headerExpression === "function"
+            ? resultOf(child.headerExpression())
+            : child.headerText;
         return (
           child.visible && (
             <GridHeaderCell
@@ -173,33 +179,42 @@ export default class GridView extends Component {
                 child.accessibleHeaderText ? child.accessibleHeaderText : null
               }
             >
-              {child.headerText}
+              {headerText}
               {allowSorting && child.sortExpression && (
-                <span style={{ float: "right" }}>
-                  <a
-                    style={sortStyle}
-                    title="Sort ascending order"
-                    onClick={() =>
-                      this.setSortExpression(
-                        child.sortExpression,
-                        TABLE_SORT_ASCENDING
-                      )
-                    }
-                  >
-                    {"<"}
-                  </a>
-                  <a
-                    style={sortStyle}
-                    title="Sort descending order"
-                    onClick={() =>
-                      this.setSortExpression(
-                        child.sortExpression,
-                        TABLE_SORT_DESCENDING
-                      )
-                    }
-                  >
-                    {">"}
-                  </a>
+                <span className="wc-table--sorting-container">
+                  <ul>
+                    <li
+                      title="Sort ascending"
+                      onClick={() =>
+                        this.setSortExpression(
+                          child.sortExpression,
+                          TABLE_SORT_ASCENDING
+                        )
+                      }
+                    >
+                      <IconArrow
+                        arrowType="up"
+                        arrowSize={4}
+                        style={{ display: "inherit" }}
+                      />
+                    </li>
+                    <li
+                      title="Sort descending"
+                      onClick={() =>
+                        this.setSortExpression(
+                          child.sortExpression,
+                          TABLE_SORT_DESCENDING
+                        )
+                      }
+                      style={{ marginTop: "3px" }}
+                    >
+                      <IconArrow
+                        arrowType="down"
+                        arrowSize={4}
+                        style={{ display: "inherit" }}
+                      />
+                    </li>
+                  </ul>
                 </span>
               )}
             </GridHeaderCell>
@@ -332,11 +347,14 @@ export default class GridView extends Component {
       showTotalRows,
       alternatingRowStyle,
       onRowDataBound,
-      initialValuesOnEvents,
+      initializeValuesOnEvents,
       ...elementProps
     } = this.props;
-    if (initialValuesOnEvents && typeof initialValuesOnEvents === "function") {
-      initialValuesOnEvents();
+    if (
+      initializeValuesOnEvents &&
+      typeof initializeValuesOnEvents === "function"
+    ) {
+      initializeValuesOnEvents();
     }
     const { internalDataSource } = this.state;
     const totalRows = dataSource.length;
@@ -391,6 +409,7 @@ export default class GridView extends Component {
                     key={-1}
                     disabled={true}
                     className="wc-table--serial-number"
+                    scope="col"
                   >
                     {"#"}
                   </GridHeaderCell>
@@ -399,8 +418,8 @@ export default class GridView extends Component {
               </GridRow>
             )}
           </thead>
-          <tbody>{bodyRows}</tbody>
-          <tfoot>
+          <tbody>
+            {bodyRows}
             {footerRow}
             {allowPaging && (
               <Pagination
@@ -411,7 +430,8 @@ export default class GridView extends Component {
                 pageIndexChanging={this.onPaginationClick}
               />
             )}
-          </tfoot>
+          </tbody>
+          <tfoot></tfoot>
         </table>
         {showTotalRows && dataSource && <span>Total Records: {totalRows}</span>}
       </div>
@@ -454,7 +474,7 @@ GridView.propTypes = {
   showRowNumbers: PropTypes.bool,
   showTotalRows: PropTypes.bool,
   alternatingRowStyle: PropTypes.object,
-  initialValuesOnEvents: PropTypes.func,
+  initializeValuesOnEvents: PropTypes.func,
 };
 GridView.defaultProps = {
   allowPaging: false,
@@ -478,6 +498,6 @@ GridView.defaultProps = {
   showRowNumbers: true,
   showTotalRows: true,
   alternatingRowStyle: null,
-  initialValuesOnEvents: null,
+  initializeValuesOnEvents: null,
 };
 GridView.displayName = "GridView";

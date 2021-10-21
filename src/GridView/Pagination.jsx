@@ -154,6 +154,9 @@ export default class Pagination extends Component {
           onPageClick={this.setFirstPageClick}
           pageNumber={pagerSettings.firstPageText}
           pagerType={pagerType}
+          itemCssClass={pagerSettings.itemCssClass}
+          linkCssClass={pagerSettings.linkCssClass}
+          activeCssClass={pagerSettings.activeCssClass}
         />
       );
       pagerItems.push(
@@ -162,6 +165,9 @@ export default class Pagination extends Component {
           onPageClick={this.setPreviousPageClick}
           pageNumber={pagerSettings.previousPageText}
           pagerType={pagerType}
+          itemCssClass={pagerSettings.itemCssClass}
+          linkCssClass={pagerSettings.linkCssClass}
+          activeCssClass={pagerSettings.activeCssClass}
         />
       );
     }
@@ -173,7 +179,7 @@ export default class Pagination extends Component {
       pageIndex++
     ) {
       const isPageSelected = pageIndex === selectedPageIndex + 1;
-      const cssName = isPageSelected ? PAGINATION_ACTIVE_PAGE_CLASS : "";
+
       pagerItems.push(
         <PagerItem
           key={pageIndex}
@@ -181,6 +187,9 @@ export default class Pagination extends Component {
           pageNumber={pageIndex}
           pagerType={pagerType}
           isPageSelected={isPageSelected}
+          itemCssClass={pagerSettings.itemCssClass}
+          linkCssClass={pagerSettings.linkCssClass}
+          activeCssClass={pagerSettings.activeCssClass}
         />
       );
     }
@@ -191,6 +200,9 @@ export default class Pagination extends Component {
           onPageClick={this.setNextPageClick}
           pageNumber={pagerSettings.nextPageText}
           pagerType={pagerType}
+          itemCssClass={pagerSettings.itemCssClass}
+          linkCssClass={pagerSettings.linkCssClass}
+          activeCssClass={pagerSettings.activeCssClass}
         />
       );
       pagerItems.push(
@@ -199,32 +211,48 @@ export default class Pagination extends Component {
           onPageClick={this.setLastPageClick}
           pageNumber={pagerSettings.lastPageText}
           pagerType={pagerType}
+          itemCssClass={pagerSettings.itemCssClass}
+          linkCssClass={pagerSettings.linkCssClass}
+          activeCssClass={pagerSettings.activeCssClass}
         />
       );
     }
-
-    let tblClassName = pagerSettings.className;
 
     const hideOuterBorder =
       pagerSettings.outerBorder === false
         ? PAGINATION_BORDER_NOBORDER_CLASS
         : null;
 
+    const pageStyle = {
+      padding: pagerSettings.outerBorder === false ? "6px 0px" : "6px",
+      verticalAlign: "middle",
+    };
     return (
       <React.Fragment>
         {totalPages > 0 && totalRows > 0 && (
-          <GridRow className={tblClassName} style={pagerSettings.style}>
+          <GridRow>
             <GridCell
               colSpan={numberOfColumns}
               className={hideOuterBorder}
               align={pagerSettings.align}
+              style={pageStyle}
             >
               {pagerType === "list" ? (
-                <ul className="wc-list-pagination">{pagerItems}</ul>
+                <ul
+                  className={pagerSettings.className}
+                  style={pagerSettings.style}
+                >
+                  {pagerItems}
+                </ul>
               ) : (
                 <table cellSpacing="10" border="0" rules="none">
                   <tbody>
-                    <GridRow>{pagerItems}</GridRow>
+                    <GridRow
+                      className={pagerSettings.className}
+                      style={pagerSettings.style}
+                    >
+                      {pagerItems}
+                    </GridRow>
                   </tbody>
                 </table>
               )}

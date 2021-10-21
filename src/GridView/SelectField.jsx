@@ -1,15 +1,14 @@
 import PropTypes from "prop-types";
 import React from "react";
-export default function BoundField() {
+export default function SelectField() {
   return <React.Fragment></React.Fragment>;
 }
-BoundField.propTypes = {
+SelectField.propTypes = {
   headerText: PropTypes.string.isRequired,
   dataField: PropTypes.string,
   dataFormatString: PropTypes.string,
   itemStyleCssClass: PropTypes.string,
   visible: PropTypes.bool,
-  headerExpression: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   dataExpression: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   footerExpression: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   sortExpression: PropTypes.string,
@@ -22,13 +21,12 @@ BoundField.propTypes = {
   footerCssClass: PropTypes.string,
   fieldType: PropTypes.string,
 };
-BoundField.defaultProps = {
+SelectField.defaultProps = {
   headerText: "",
   dataField: null,
   dataFormatString: null,
   itemStyleCssClass: null,
   visible: true,
-  headerExpression: null,
   dataExpression: null,
   footerExpression: null,
   sortExpression: null,
@@ -39,6 +37,6 @@ BoundField.defaultProps = {
   footerCssClass: null,
   itemCssClass: null,
   accessibleHeaderText: null,
-  fieldType: "BoundField",
+  fieldType: "SelectField",
 };
-BoundField.displayName = "BoundField";
+SelectField.displayName = "SelectField";
